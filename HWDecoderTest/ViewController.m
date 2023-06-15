@@ -5,6 +5,8 @@
 //  Created by Abhijeet Kandalkar on 15/06/23.
 //
 
+@import AVFoundation;
+
 #import "ViewController.h"
 #import <VideoToolbox/VideoToolbox.h>
 
@@ -61,6 +63,28 @@
         NSLog(@"Error ...........");
     }
     
+    //Capture Session
+    AVCaptureSession *session = [[AVCaptureSession alloc]init];
+    session.sessionPreset = AVCaptureSessionPresetPhoto;
+
+    // Choose the back dual camera if available, otherwise default to a wide angle camera.
+    AVCaptureDevice* videoDevice = [AVCaptureDevice defaultDeviceWithDeviceType:AVCaptureDeviceTypeBuiltInDualCamera mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionBack];
+    if (!videoDevice) {
+        // If a rear dual camera is not available, default to the rear dual wide angle camera.
+        videoDevice = [AVCaptureDevice defaultDeviceWithDeviceType:AVCaptureDeviceTypeBuiltInDualWideCamera mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionBack];
+    }
+    if (!videoDevice) {
+        // If a rear dual wide camera is not available, default to the rear wide angle camera.
+        videoDevice = [AVCaptureDevice defaultDeviceWithDeviceType:AVCaptureDeviceTypeBuiltInWideAngleCamera mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionBack];
+    }
+    if (!videoDevice) {
+        // If a rear wide angle camera is not available, default to the front wide angle camera.
+        videoDevice = [AVCaptureDevice defaultDeviceWithDeviceType:AVCaptureDeviceTypeBuiltInWideAngleCamera mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionFront];
+    }
+
+    for (AVCaptureDeviceFormat* device_format in videoDevice.formats) {
+        NSLog(@"Format description: %@", device_format.description);
+    }
 }
 
 
